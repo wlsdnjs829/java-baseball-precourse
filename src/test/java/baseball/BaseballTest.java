@@ -2,6 +2,7 @@ package baseball;
 
 import baseball.model.BaseBallGame;
 import camp.nextstep.edu.missionutils.test.NsTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -84,19 +85,19 @@ class BaseballTest extends NsTest {
         BaseBallGame baseBallGame = getBaseBallGame();
 
         baseBallGame.playGame(Arrays.asList(1, 4, 5));
-        assertThat(output()).contains("숫자를 입력해주세요");
+        Assertions.assertFalse(baseBallGame.isGameOver());
         init();
 
         baseBallGame.playGame(Arrays.asList(1, 3, 4));
-        assertThat(output()).contains("숫자를 입력해주세요");
+        Assertions.assertFalse(baseBallGame.isGameOver());
         init();
 
         baseBallGame.playGame(Arrays.asList(1, 3, 2));
-        assertThat(output()).contains("숫자를 입력해주세요");
+        Assertions.assertFalse(baseBallGame.isGameOver());
         init();
 
         baseBallGame.playGame(Arrays.asList(1, 2, 3));
-        assertThat(output()).doesNotContain("숫자를 입력해주세요");
+        Assertions.assertTrue(baseBallGame.isGameOver());
     }
 
     @Test

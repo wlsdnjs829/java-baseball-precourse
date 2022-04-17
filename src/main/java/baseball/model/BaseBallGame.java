@@ -3,13 +3,10 @@ package baseball.model;
 import baseball.utils.ValidUtil;
 import camp.nextstep.edu.missionutils.Console;
 import camp.nextstep.edu.missionutils.Randoms;
-import org.assertj.core.util.Lists;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * 숫자 야구 객체
@@ -21,7 +18,8 @@ public class BaseBallGame {
     private final Ball ball;
     private boolean isGameOver;
 
-    private static final String ENTER_NUMBER = "숫자를 입력해주세요 : ";
+    private static final String ENTER_DIGITS = "숫자를 입력해주세요 : ";
+    private static final String GAME_END_MESSAGE = "3개의 숫자를 모두 맞히셨습니다! 게임 종료";
     private static final String EMPTY = "";
     private static final String SPACE = " ";
     private static final String NOT_THING = "낫싱";
@@ -66,10 +64,25 @@ public class BaseBallGame {
      * 게임 시작
      */
     public void gameStart() {
-        System.out.print(ENTER_NUMBER);
+        playGame(enterDigits());
+        processAfterPlayGame();
+    }
+
+    /* 숫자 입력 */
+    private List<Integer> enterDigits() {
+        System.out.print(ENTER_DIGITS);
         final String submitNumber = Console.readLine();
-        final List<Integer> digits = getNonDuplicateDigitsThrowIfInvalid(submitNumber);
-        playGame(digits);
+        return getNonDuplicateDigitsThrowIfInvalid(submitNumber);
+    }
+
+    /* 게임 종료 후 진행 작업 */
+    private void processAfterPlayGame() {
+        if (isGameOver()) {
+            System.out.println(GAME_END_MESSAGE);
+            return;
+        }
+
+        gameStart();
     }
 
     /* 게임 시작 */
@@ -79,25 +92,39 @@ public class BaseBallGame {
             playGameByIndex(digit, index);
         }
 
-        final String ballState = ball.getBallState();
-        final String strikeState = strike.getBallState();
-
+        String ballState = ball.getBallState();
+        String strikeState = strike.getBallState();
         System.out.println(combineGameState(ballState, strikeState));
+        this.isGameOver = strike.isGameOver(GAME_ANSWER_SIZE);
+        ballTypeInit();
+    }
+
+    /* 볼 타입 초기화 */
+    private void ballTypeInit() {
         ball.init();
         strike.init();
     }
 
     /* 게임 상태 조합 */
     private String combineGameState(String ballState, String strikeState) {
-        if (Objects.nonNull(ballState)) {
-            return ballState + SPACE + strikeState;
+        if (Objects.isNull(ballState) && Objects.isNull(strikeState)) {
+            return NOT_THING;
         }
 
-        if (Objects.nonNull(strikeState)) {
+        if (Objects.isNull(ballState)) {
             return strikeState;
         }
 
-        return NOT_THING;
+        return ballState + SPACE + getStringIfNullIsEmpty(strikeState);
+    }
+
+    /* 문자열 조회, 없는 경우 빈 문자열 반환 */
+    private String getStringIfNullIsEmpty(String string) {
+        if (Objects.isNull(string)) {
+            return EMPTY;
+        }
+
+        return string;
     }
 
     /* 인덱스 단위로 게임 */
@@ -119,24 +146,29 @@ public class BaseBallGame {
         ValidUtil.throwIllegalArgumentExceptionIfTrue(Objects.isNull(submitNumber));
 
         String[] arraySubmitNumber = submitNumber.split(EMPTY);
-        final Set<Integer> digits = getValidDigitsThrowIfInvalid(arraySubmitNumber);
-
-        ValidUtil.throwIllegalArgumentExceptionIfTrue(digits.size() != GAME_ANSWER_SIZE);
-        return Lists.newArrayList(digits);
+        return getValidDigitsThrowIfInvalid(arraySubmitNumber);
     }
 
     /* 유효한 숫자 리스트 조회, 유효하지 않을 시 예외 처리 */
-    private Set<Integer> getValidDigitsThrowIfInvalid(String[] arraySubmitNumber) {
-        final Set<Integer> digits = new HashSet<>();
+    private List<Integer> getValidDigitsThrowIfInvalid(String[] arraySubmitNumber) {
+        final List<Integer> digits = new ArrayList<>();
 
         for (String submitNum : arraySubmitNumber) {
             ValidUtil.throwIllegalArgumentExceptionIfTrue(Objects.isNull(submitNum));
             final int digit = Integer.parseInt(submitNum);
-            ValidUtil.throwIllegalArgumentExceptionIfTrue(digit < 1 || digit > 9);
+            ValidUtil.throwIllegalArgumentExceptionIfTrue(digit < 1 || digit > 9 || digits.contains(digit));
             digits.add(digit);
         }
 
         return digits;
+    }
+
+    /**
+     * 게임 종료 여부 조회
+     * @return boolean true : 게임 종료 / false : 게임 유지
+     */
+    public boolean isGameOver() {
+        return isGameOver;
     }
 
 }
