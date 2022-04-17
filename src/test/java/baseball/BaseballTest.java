@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class baseballTest extends NsTest {
+class BaseballTest extends NsTest {
 
     @Test
     @DisplayName("3자리 수 추출 시 정상적인 값이 추출되었는지 확인")
