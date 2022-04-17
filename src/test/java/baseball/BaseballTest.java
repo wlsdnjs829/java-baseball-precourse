@@ -1,5 +1,6 @@
 package baseball;
 
+import baseball.enums.SubmitButtonType;
 import baseball.model.BaseBallGame;
 import camp.nextstep.edu.missionutils.test.NsTest;
 import org.junit.jupiter.api.Assertions;
@@ -103,17 +104,17 @@ class BaseballTest extends NsTest {
     @Test
     @DisplayName("게임을 다시 시작하거나 종료할 수 있는 기능이 정상적으로 되는지 확인")
     void 게임_다시_시작_혹은_종료_기능() {
-        BaseBallGame baseBallGame = getBaseBallGame();
+        final BaseBallGame baseBallGame = getBaseBallGame();
 
         baseBallGame.playGame(Arrays.asList(1, 2, 3));
         init();
-        baseBallGame.askGameContinue(1);
-        assertThat(output()).contains("숫자를 입력해주세요");
+        final SubmitButtonType restart = baseBallGame.askGameContinue("1");
+        assertEquals(restart, SubmitButtonType.RESTART_BUTTON);
         init();
 
         baseBallGame.playGame(Arrays.asList(1, 2, 3));
-        baseBallGame.askGameContinue(2);
-        assertThat(output()).contains("게임 종료");
+        final SubmitButtonType end = baseBallGame.askGameContinue("2");
+        assertEquals(end, SubmitButtonType.END_BUTTON);
         init();
     }
 

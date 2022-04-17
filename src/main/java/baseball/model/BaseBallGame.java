@@ -1,5 +1,6 @@
 package baseball.model;
 
+import baseball.enums.SubmitButtonType;
 import baseball.utils.ValidUtil;
 import camp.nextstep.edu.missionutils.Console;
 import camp.nextstep.edu.missionutils.Randoms;
@@ -7,6 +8,8 @@ import camp.nextstep.edu.missionutils.Randoms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static baseball.enums.SubmitButtonType.RESTART_BUTTON;
 
 /**
  * 숫자 야구 객체
@@ -19,7 +22,9 @@ public class BaseBallGame {
     private boolean isGameOver;
 
     private static final String ENTER_DIGITS = "숫자를 입력해주세요 : ";
-    private static final String GAME_END_MESSAGE = "3개의 숫자를 모두 맞히셨습니다! 게임 종료";
+    private static final String CLEAR_MESSAGE = "3개의 숫자를 모두 맞히셨습니다! ";
+    private static final String GAME_END_MESSAGE = "게임 종료";
+    private static final String CHOICE_MESSAGE = "게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.";
     private static final String EMPTY = "";
     private static final String SPACE = " ";
     private static final String NOT_THING = "낫싱";
@@ -35,6 +40,14 @@ public class BaseBallGame {
         this.answers = answers;
         this.strike = new Strike();
         this.ball = new Ball();
+    }
+
+    /* 숫자 야구 게임 초기화 */
+    private void initBaseBallGame() {
+        this.answers = getThreeNumberExtraction();
+        this.strike.init();
+        this.ball.init();
+        this.isGameOver = false;
     }
 
     /**
@@ -77,12 +90,28 @@ public class BaseBallGame {
 
     /* 게임 종료 후 진행 작업 */
     private void processAfterPlayGame() {
-        if (isGameOver()) {
-            System.out.println(GAME_END_MESSAGE);
+        if (!isGameOver()) {
+            gameStart();
             return;
         }
 
-        gameStart();
+        System.out.println(CLEAR_MESSAGE + GAME_END_MESSAGE);
+        System.out.println(CHOICE_MESSAGE);
+        final String submitButton = Console.readLine();
+        SubmitButtonType submitButtonType = askGameContinue(submitButton);
+        submitButtonType.apply(this);
+    }
+
+    /**
+     * 계속 게임 진행할건지 확인
+     *
+     * @param submitButton (입력받은 버튼)
+     */
+    public SubmitButtonType askGameContinue(String submitButton) {
+        SubmitButtonType submitButtonType = SubmitButtonType.getEnumByValue(submitButton);
+        ValidUtil.throwIllegalArgumentExceptionIfTrue(Objects.isNull(submitButtonType));
+        initBaseBallGame();
+        return submitButtonType;
     }
 
     /* 게임 시작 */
@@ -144,8 +173,8 @@ public class BaseBallGame {
     /* 중복 되지 않은 숫자 리스트 조회, 유효하지 않을 시 예외 처리 */
     private List<Integer> getNonDuplicateDigitsThrowIfInvalid(String submitNumber) {
         ValidUtil.throwIllegalArgumentExceptionIfTrue(Objects.isNull(submitNumber));
-
         String[] arraySubmitNumber = submitNumber.split(EMPTY);
+        ValidUtil.throwIllegalArgumentExceptionIfTrue(arraySubmitNumber.length != GAME_ANSWER_SIZE);
         return getValidDigitsThrowIfInvalid(arraySubmitNumber);
     }
 
@@ -169,6 +198,13 @@ public class BaseBallGame {
      */
     public boolean isGameOver() {
         return isGameOver;
+    }
+
+    /**
+     * 게임 종료 메시지 프린트
+     */
+    public void printGameEndMessage() {
+        System.out.println(GAME_END_MESSAGE);
     }
 
 }
