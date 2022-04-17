@@ -1,20 +1,19 @@
 package baseball;
 
-import camp.nextstep.edu.missionutils.Randoms;
+import baseball.model.BaseBallGame;
 import camp.nextstep.edu.missionutils.test.NsTest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import static camp.nextstep.edu.missionutils.test.Assertions.assertRandomNumberInRangeTest;
-import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BaseballTest extends NsTest {
@@ -22,16 +21,16 @@ class BaseballTest extends NsTest {
     @Test
     @DisplayName("3자리 수 추출 시 정상적인 값이 추출되었는지 확인")
     void 정해진_수로_이루어진_3자리의_수_추출() {
-        int value = getThreeNumberExtarction();
-        String[] digits = {String.valueOf(value)};
-        assertEquals(3, digits.length); // 3자리 수 인지 판단한다
+        BaseBallGame baseBallGame = new BaseBallGame();
+        final List<Integer> digits = baseBallGame.getThreeNumberExtraction();
+        assertNotNull(digits); // 리스트가 생성되어 있는지 확인한다.
+        assertEquals(3, digits.size()); // 3자리 수 인지 판단한다.
 
         final Set<Integer> distinctDigits = new HashSet<>();
 
-        for (String digit : digits) {
-            int unit = Integer.parseInt(digit);
-            assertTrue(0 < unit && unit < 10);
-            distinctDigits.add(unit);
+        for (Integer digit : digits) {
+            assertTrue(0 < digit && digit < 10);
+            distinctDigits.add(digit);
         }
 
         assertEquals(3, distinctDigits.size()); // 중복된 수가 있는지 판단한다.
