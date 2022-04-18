@@ -36,21 +36,22 @@ public abstract class BallType {
 
     /* 횟수 조회 */
     protected int getCount() {
+        if (Objects.isNull(this.count)) {
+            return ZERO;
+        }
+
         return count.get();
     }
 
     /* 볼 상태 조회 */
     protected String getBallState() {
-        if (Objects.isNull(count)) {
+        int ballCount = getCount();
+
+        if (ballCount == ZERO) {
             return null;
         }
 
-        int countNum = count.get();
-        if (countNum == ZERO) {
-            return null;
-        }
-
-        return countNum + ballTypeCode.getBallTypeCodeWord();
+        return ballCount + ballTypeCode.getBallTypeCodeWord();
     }
 
 }

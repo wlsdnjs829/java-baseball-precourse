@@ -2,6 +2,8 @@ package baseball;
 
 import camp.nextstep.edu.missionutils.test.NsTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertRandomNumberInRangeTest;
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
@@ -9,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ApplicationTest extends NsTest {
+
     @Test
     void 게임종료_후_재시작() {
         assertRandomNumberInRangeTest(
@@ -28,8 +31,18 @@ class ApplicationTest extends NsTest {
         );
     }
 
+    @ParameterizedTest(name = "잘못된 입력 값 테스트")
+    @CsvSource(value = {"1234", "ㅇㄹㄷ", "1", "12", "21ㅇ"})
+    void 잘못된_입력_값_테스트(String submitNumber) {
+        assertSimpleTest(() ->
+                assertThatThrownBy(() -> runException(submitNumber))
+                        .isInstanceOf(IllegalArgumentException.class)
+        );
+    }
+
     @Override
     public void runMain() {
         Application.main(new String[]{});
     }
+
 }

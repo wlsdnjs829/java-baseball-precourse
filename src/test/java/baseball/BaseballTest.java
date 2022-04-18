@@ -1,6 +1,7 @@
 package baseball;
 
 import baseball.enums.SubmitButtonType;
+import baseball.model.AnswerDigits;
 import baseball.model.BaseBallGame;
 import camp.nextstep.edu.missionutils.test.NsTest;
 import org.junit.jupiter.api.Assertions;
@@ -13,8 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +24,7 @@ class BaseballTest extends NsTest {
     @DisplayName("3자리 수 추출 시 정상적인 값이 추출되었는지 확인")
     void 정해진_수로_이루어진_3자리의_수_추출() {
         BaseBallGame baseBallGame = new BaseBallGame();
-        final List<Integer> digits = baseBallGame.getThreeNumberExtraction();
+        final List<Integer> digits = AnswerDigits.getThreeNumberExtraction();
         assertNotNull(digits); // 리스트가 생성되어 있는지 확인한다.
         assertEquals(3, digits.size()); // 3자리 수 인지 판단한다.
 
@@ -83,22 +82,18 @@ class BaseballTest extends NsTest {
     @Test
     @DisplayName("숫자 야구 룰에 의거하여 상황에 따른 동작을 진행하는지 확인")
     void 반복_기능() {
-        BaseBallGame baseBallGame = getBaseBallGame();
+        final BaseBallGame baseBallGame = getBaseBallGame();
 
-        baseBallGame.playGame(Arrays.asList(1, 4, 5));
-        Assertions.assertFalse(baseBallGame.isGameOver());
+        Assertions.assertDoesNotThrow(() -> baseBallGame.playGame(Arrays.asList(1, 4, 5)));
         init();
 
-        baseBallGame.playGame(Arrays.asList(1, 3, 4));
-        Assertions.assertFalse(baseBallGame.isGameOver());
+        Assertions.assertDoesNotThrow(() -> baseBallGame.playGame(Arrays.asList(1, 3, 4)));
         init();
 
-        baseBallGame.playGame(Arrays.asList(1, 3, 2));
-        Assertions.assertFalse(baseBallGame.isGameOver());
+        Assertions.assertDoesNotThrow(() -> baseBallGame.playGame(Arrays.asList(1, 3, 2)));
         init();
 
-        baseBallGame.playGame(Arrays.asList(1, 2, 3));
-        Assertions.assertTrue(baseBallGame.isGameOver());
+        Assertions.assertDoesNotThrow(() -> baseBallGame.playGame(Arrays.asList(1, 2, 3)));
     }
 
     @Test
@@ -109,12 +104,12 @@ class BaseballTest extends NsTest {
         baseBallGame.playGame(Arrays.asList(1, 2, 3));
         init();
         final SubmitButtonType restart = baseBallGame.askGameContinue("1");
-        assertEquals(restart, SubmitButtonType.RESTART_BUTTON);
+        assertEquals(SubmitButtonType.RESTART_BUTTON, restart);
         init();
 
         baseBallGame.playGame(Arrays.asList(1, 2, 3));
         final SubmitButtonType end = baseBallGame.askGameContinue("2");
-        assertEquals(end, SubmitButtonType.END_BUTTON);
+        assertEquals(SubmitButtonType.END_BUTTON, end);
         init();
     }
 

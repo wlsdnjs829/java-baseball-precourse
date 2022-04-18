@@ -1,7 +1,5 @@
 package baseball.enums;
 
-import baseball.model.BaseBallGame;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,27 +8,14 @@ import java.util.List;
  */
 public enum SubmitButtonType {
 
-    RESTART_BUTTON("1") {
-        @Override
-        public void apply(BaseBallGame baseBallGame) {
-            baseBallGame.gameStart();
-        }
-    },
-
-    END_BUTTON("2") {
-        @Override
-        public void apply(BaseBallGame baseBallGame) {
-            baseBallGame.printGameEndMessage();
-        }
-    };
+    RESTART_BUTTON("1"),
+    END_BUTTON("2");
 
     private final String value;
 
     private String getValue() {
         return value;
     }
-
-    public abstract void apply(BaseBallGame baseBallGame);
 
     SubmitButtonType(String value) {
         this.value = value;
@@ -44,6 +29,7 @@ public enum SubmitButtonType {
      */
     public static SubmitButtonType getEnumByValue(String value) {
         final List<SubmitButtonType> submitButtonTypes = new ArrayList<>();
+
         for (SubmitButtonType submitButtonType : SubmitButtonType.values()) {
             addSubmitButtonType(value, submitButtonTypes, submitButtonType);
         }
@@ -58,11 +44,21 @@ public enum SubmitButtonType {
     /* 제출 버튼 타입 추가 */
     private static void addSubmitButtonType(String value, List<SubmitButtonType> submitButtonTypes,
                                             SubmitButtonType submitButtonType) {
-        String typeValue = submitButtonType.getValue();
+        final String typeValue = submitButtonType.getValue();
 
         if (typeValue.equals(value)) {
             submitButtonTypes.add(submitButtonType);
         }
+    }
+
+    /**
+     * 재시작 타입 여부 반환
+     *
+     * @param submitButtonType (제출 버튼 타입)
+     * @return boolean 포함하는 여부 반환
+     */
+    public static boolean isRestartType(SubmitButtonType submitButtonType) {
+        return RESTART_BUTTON.equals(submitButtonType);
     }
 
 }
