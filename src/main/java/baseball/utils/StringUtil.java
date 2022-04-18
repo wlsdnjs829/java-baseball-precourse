@@ -8,7 +8,7 @@ import java.util.Objects;
 public class StringUtil {
 
     private static final String EMPTY = "";
-    private static final String NOT_THING = "낫싱";
+    private static final String NOTHING = "낫싱";
     private static final String SPACE = " ";
 
     private StringUtil() {
@@ -38,7 +38,7 @@ public class StringUtil {
      */
     public static String combineBallState(String ballState, String strikeState) {
         if (Objects.isNull(ballState) && Objects.isNull(strikeState)) {
-            return NOT_THING;
+            return NOTHING;
         }
 
         if (Objects.isNull(ballState)) {
